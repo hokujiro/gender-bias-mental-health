@@ -186,11 +186,11 @@
     .scene.visible { opacity: 1; transform: translateY(0); }
 
     /* ── Text + chart layouts ────────── */
-    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
-    .split-wide { display: grid; grid-template-columns: 5fr 7fr; gap: 64px; align-items: start; }
-    .split-reverse { display: grid; grid-template-columns: 7fr 5fr; gap: 64px; align-items: start; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .split-wide { display: grid; grid-template-columns: 5fr 7fr; gap: 56px; align-items: start; }
+    .split-reverse { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; align-items: start; }
     @media (max-width: 780px) {
-      .split, .split-wide, .split-reverse { grid-template-columns: 1fr; gap: 40px; }
+      .split, .split-wide, .split-reverse { grid-template-columns: 1fr; gap: 0; }
       nav .nav-chapters { display: none; }
     }
 
@@ -223,7 +223,7 @@
 
     /* ── Big stat ────────────────────── */
     .stat-isolated {
-      padding: 24px 0 20px; text-align: center;
+      padding: 4px 0 36px; text-align: center;
     }
     .stat-isolated .num {
       font-family: 'DM Serif Display', serif;
@@ -505,7 +505,7 @@
       <p class="section-subhead">P1 · Prevalencia estimada vs. diagnóstico clínico por trastorno</p>
     </div>
 
-    <div class="split" style="gap:48px;">
+    <div class="split">
       <div>
         <p class="lead" style="font-size:1.05rem;">
           ¿Qué trastornos presentan mayor brecha de género?
@@ -558,7 +558,7 @@
       <h2>El Trastorno Límite de Personalidad</h2>
       <p class="section-subhead">P2 · Misma prevalencia, diagnóstico muy distinto</p>
     </div>
-    <div class="split-reverse" style="gap:56px; align-items:start;">
+    <div class="split-reverse">
       <div>
         <p class="lead">
           La epidemiología estima que el TLP afecta al ~1,6 % de la población
@@ -608,7 +608,7 @@
       <h2>TDAH: las mujeres invisibles</h2>
       <p class="section-subhead">P2 · Infradiagnóstico femenino por grupo de edad</p>
     </div>
-    <div class="split-wide" style="gap:56px;">
+    <div class="split-wide">
       <div>
         <div class="chart-panel dark" style="margin-bottom:24px;">
           <div class="chart-label">Ratio diagnóstica F/M · TDAH · 2021</div>
@@ -663,7 +663,7 @@
       La depresión masculina se enmascara porque el fenotipo clínico
       privilegia síntomas que los hombres expresan con menor frecuencia.
     </p>
-    <div class="split" style="gap:32px;">
+    <div class="split">
       <div class="chart-panel">
         <div class="chart-label">T. alimentarios · estimado vs. diagnosticado · por 100 000</div>
         <div class="leg" style="margin-top:8px; margin-bottom:12px;">
@@ -730,7 +730,7 @@
       <h2>La geografía del sesgo</h2>
       <p class="section-subhead">P3 · Índice de Desigualdad de Género × brecha diagnóstica</p>
     </div>
-    <div class="split" style="gap:56px; align-items:start;">
+    <div class="split">
       <div>
         <p class="lead" style="font-size:1.05rem;">
           Los sesgos diagnósticos no son solo científicos:
