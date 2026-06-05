@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sesgos de Género en el Diagnóstico Psiquiátrico · 1990–2021</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #070714;
+      --surface:  #0f0f2a;
+      --surface2: #1a1a3e;
+      --female:   #e91e8c;
+      --male:     #1e90ff;
+      --neutral:  #9b59b6;
+      --text:     #e8e8f0;
+      --muted:    #7a7a9a;
+      --gold:     #f0c040;
+      --white:    #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 17px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+
+    /* ── Progress bar ─────────────────────────────────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--female), var(--neutral), var(--male));
+      width: 0%; z-index: 999; transition: width .1s;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 3px; left: 0; right: 0;
+      padding: 14px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 100;
+      background: rgba(7,7,20,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-style: italic; color: var(--muted);
+      letter-spacing: .05em;
+    }
+    .nav-chapters {
+      display: flex; gap: 24px; list-style: none;
+    }
+    .nav-chapters a {
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      text-decoration: none; letter-spacing: .04em;
+      transition: color .25s;
+    }
+    .nav-chapters a:hover, .nav-chapters a.active { color: var(--white); }
+    .nav-pill {
+      font-size: 12px; font-weight: 600;
+      background: rgba(233,30,140,.15);
+      border: 1px solid rgba(233,30,140,.4);
+      color: var(--female);
+      padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* ── Section base ─────────────────────────────────────────────────── */
+    section {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 120px 24px 80px;
+      position: relative;
+    }
+    .container { max-width: 1060px; width: 100%; }
+
+    /* ── Hero ─────────────────────────────────────────────────────────── */
+    #hero {
+      background: radial-gradient(ellipse 80% 60% at 50% -10%,
+        rgba(155,89,182,.25) 0%, transparent 70%);
+      text-align: center;
+    }
+    #hero .kicker {
+      font-size: 12px; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--neutral);
+      margin-bottom: 20px;
+      opacity: 0; transform: translateY(20px);
+    }
+    #hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--female) 0%, var(--white) 45%, var(--male) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+      opacity: 0; transform: translateY(30px);
+    }
+    #hero .subtitle {
+      font-size: 1.15rem; color: var(--muted); max-width: 640px;
+      margin: 0 auto 48px;
+      opacity: 0; transform: translateY(20px);
+    }
+    #hero .hero-stats {
+      display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 64px;
+      opacity: 0;
+    }
+    .hero-stat {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px; padding: 24px 32px; text-align: center;
+      min-width: 150px;
+    }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--female), var(--neutral));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-stat-label { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--muted); font-size: 12px; letter-spacing: .1em;
+      opacity: 0; animation: fadeInUp .8s 2.5s forwards;
+    }
+    .scroll-arrow {
+      width: 24px; height: 24px;
+      border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+      transform: rotate(45deg);
+      animation: bounce 1.5s infinite;
+    }
+    @keyframes bounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(6px)} }
+    @keyframes fadeInUp { to { opacity:1; transform:translateX(-50%) translateY(0); } }
+
+    /* ── Chapter title banner ─────────────────────────────────────────── */
+    .chapter-banner {
+      background: var(--surface2);
+      border-top: 1px solid rgba(255,255,255,.06);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      padding: 16px 32px;
+      text-align: center;
+    }
+    .chapter-banner .chapter-label {
+      font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--neutral); margin-bottom: 4px;
+    }
+    .chapter-banner h2 { font-size: 1.3rem; font-weight: 700; }
+
+    /* ── Scene layout ─────────────────────────────────────────────────── */
+    .scene {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .scene.visible { opacity: 1; transform: translateY(0); }
+
+    .scene-header { margin-bottom: 40px; }
+    .scene-label {
+      font-size: 11px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--neutral);
+      display: inline-block; margin-bottom: 12px;
+    }
+    .scene-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; }
+    .scene-body { font-size: .98rem; color: var(--muted); max-width: 600px; margin-top: 12px; }
+    .highlight { color: var(--female); font-weight: 600; }
+    .highlight-m { color: var(--male); font-weight: 600; }
+
+    /* ── Cards ────────────────────────────────────────────────────────── */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 16px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px; padding: 24px;
+      transition: transform .25s, border-color .25s;
+    }
+    .card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.15); }
+    .card-icon { font-size: 24px; margin-bottom: 12px; }
+    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .card-desc { font-size: .85rem; color: var(--muted); }
+
+    /* ── Divider ──────────────────────────────────────────────────────── */
+    .divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--female), var(--male));
+      border-radius: 2px; margin: 16px 0;
+    }
+
+    /* ── Chart containers ─────────────────────────────────────────────── */
+    .chart-wrap {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 20px; padding: 32px;
+      overflow: hidden; position: relative;
+    }
+    .chart-title {
+      font-size: 1.05rem; font-weight: 600; margin-bottom: 6px;
+    }
+    .chart-subtitle { font-size: .83rem; color: var(--muted); margin-bottom: 24px; }
+
+    /* ── Legend ───────────────────────────────────────────────────────── */
+    .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Tooltip ──────────────────────────────────────────────────────── */
+    #tooltip {
+      position: fixed; pointer-events: none;
+      background: rgba(15,15,42,.95);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px; padding: 12px 16px;
+      font-size: 13px; line-height: 1.6;
+      z-index: 500; opacity: 0;
+      transition: opacity .15s;
+      max-width: 220px;
+    }
+    #tooltip strong { color: var(--white); display: block; margin-bottom: 4px; }
+
+    /* ── Big number call-out ──────────────────────────────────────────── */
+    .big-callout {
+      background: linear-gradient(135deg, rgba(233,30,140,.08), rgba(155,89,182,.08));
+      border: 1px solid rgba(233,30,140,.25);
+      border-radius: 20px; padding: 40px; text-align: center; margin: 32px 0;
+    }
+    .big-callout .num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 10vw, 7rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--female), var(--neutral));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1;
+    }
+    .big-callout .label { font-size: 1rem; color: var(--muted); margin-top: 8px; }
+
+    /* ── Two-col layout ───────────────────────────────────────────────── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    @media (max-width: 720px) {
+      .two-col { grid-template-columns: 1fr; }
+      nav .nav-chapters { display: none; }
+    }
+
+    /* ── Section colors ───────────────────────────────────────────────── */
+    #intro-section   { background: radial-gradient(ellipse 60% 50% at 20% 50%, rgba(155,89,182,.08), transparent 70%); }
+    #gap-section     { background: radial-gradient(ellipse 60% 50% at 80% 50%, rgba(233,30,140,.06), transparent 70%); }
+    #tlp-section     { background: radial-gradient(ellipse 60% 50% at 10% 80%, rgba(233,30,140,.1), transparent 70%); }
+    #adhd-section    { background: radial-gradient(ellipse 60% 50% at 90% 20%, rgba(30,144,255,.08), transparent 70%); }
+    #eating-section  { background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(155,89,182,.08), transparent 70%); }
+    #temporal-section{ background: radial-gradient(ellipse 60% 50% at 20% 50%, rgba(240,192,64,.06), transparent 70%); }
+    #geo-section     { background: radial-gradient(ellipse 60% 60% at 50% 100%, rgba(30,144,255,.07), transparent 70%); }
+    #conclusion      { background: radial-gradient(ellipse 80% 60% at 50% 110%, rgba(155,89,182,.2), transparent 70%); text-align: center; }
+
+    /* ── Sources bar ──────────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 40px 32px;
+      text-align: center;
+      font-size: 12px; color: var(--muted); line-height: 2;
+    }
+    footer a { color: var(--neutral); }
+    .source-chip {
+      display: inline-block;
+      background: rgba(155,89,182,.15);
+      border: 1px solid rgba(155,89,182,.3);
+      border-radius: 20px; padding: 3px 12px;
+      margin: 4px; font-size: 11px; color: var(--neutral);
+    }
+
+    /* ── Animated counter ─────────────────────────────────────────────── */
+    .counter { font-variant-numeric: tabular-nums; }
+
+    /* ── Diverging bar base ───────────────────────────────────────────── */
+    .diverging-bar { margin-bottom: 12px; }
+    .dbar-label { font-size: 13px; margin-bottom: 4px; color: var(--text); }
+    .dbar-track {
+      display: flex; align-items: center; gap: 4px;
+      height: 28px;
+    }
+    .dbar-f, .dbar-m {
+      height: 100%; border-radius: 4px;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+      position: relative; display: flex; align-items: center;
+    }
+    .dbar-f { background: var(--female); justify-content: flex-end; padding-right: 6px; }
+    .dbar-m { background: var(--male);  justify-content: flex-start; padding-left: 6px; }
+    .dbar-val { font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap; }
+    .dbar-center { width: 2px; background: rgba(255,255,255,.3); height: 100%; flex-shrink: 0; }
+
+    /* ── Scrolling panels (sticky) ────────────────────────────────────── */
+    .sticky-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: start;
+      min-height: 200vh;
+    }
+    .sticky-text { padding: 120px 48px 120px 24px; }
+    .sticky-chart-wrap {
+      position: sticky; top: 80px;
+      padding: 120px 24px 80px 0;
+    }
+    @media (max-width: 860px) {
+      .sticky-section { grid-template-columns: 1fr; min-height: unset; }
+      .sticky-chart-wrap { position: relative; top: 0; }
+      .sticky-text { padding: 60px 24px; }
+    }
+
+    .step-block {
+      min-height: 50vh;
+      display: flex; align-items: center;
+      opacity: .3;
+      transition: opacity .4s;
+    }
+    .step-block.active { opacity: 1; }
+    .step-content { max-width: 480px; }
+    .step-num {
+      font-size: 60px; font-weight: 900;
+      font-family: 'Playfair Display', serif;
+      color: rgba(255,255,255,.05);
+      line-height: 1; margin-bottom: 8px;
+    }
+    .step-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 12px; }
+    .step-body { font-size: .95rem; color: var(--muted); }
+
+    /* ── Range slider ─────────────────────────────────────────────────── */
+    .range-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      width: 200px; height: 4px;
+      background: rgba(255,255,255,.15); border-radius: 2px; outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--neutral); cursor: pointer;
+    }
+    .range-label { font-size: 13px; color: var(--muted); }
+    .year-display {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 700; min-width: 50px;
+    }
+
+    /* ── SVG defaults ─────────────────────────────────────────────────── */
+    svg text { font-family: 'Inter', sans-serif; }
+
+    /* ── Intro cards ──────────────────────────────────────────────────── */
+    .intro-card {
+      background: var(--surface2);
+      border-left: 3px solid var(--neutral);
+      border-radius: 0 12px 12px 0;
+      padding: 20px 24px; margin-bottom: 20px;
+    }
+    .intro-card.female-accent { border-left-color: var(--female); }
+    .intro-card.male-accent   { border-left-color: var(--male); }
+    .intro-card h4 { font-size: 1rem; margin-bottom: 6px; }
+    .intro-card p  { font-size: .88rem; color: var(--muted); }
+
+    /* ── Funnel ───────────────────────────────────────────────────────── */
+    .funnel-row {
+      display: flex; align-items: center; margin-bottom: 14px;
+    }
+    .funnel-label { width: 130px; font-size: 12px; color: var(--muted); flex-shrink: 0; }
+    .funnel-bar-wrap { flex: 1; height: 28px; background: rgba(255,255,255,.05); border-radius: 6px; overflow: hidden; position: relative; }
+    .funnel-bar { height: 100%; border-radius: 6px; transition: width 1.5s cubic-bezier(.4,0,.2,1); }
+    .funnel-val { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; }
+
+    /* ── Comparison pill ──────────────────────────────────────────────── */
+    .compare-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .compare-pill {
+      border-radius: 30px; padding: 6px 18px;
+      font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .compare-pill.f { background: rgba(233,30,140,.2); border: 1px solid rgba(233,30,140,.4); color: var(--female); }
+    .compare-pill.m { background: rgba(30,144,255,.2);  border: 1px solid rgba(30,144,255,.4);  color: var(--male); }
+    .compare-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .compare-pill.f .dot { background: var(--female); }
+    .compare-pill.m .dot { background: var(--male); }
+
+    /* ── Quote block ──────────────────────────────────────────────────── */
+    .quote-block {
+      border-left: 3px solid var(--gold);
+      padding: 16px 24px; margin: 24px 0;
+      background: rgba(240,192,64,.05);
+      border-radius: 0 12px 12px 0;
+    }
+    .quote-block p { font-size: 1.05rem; font-style: italic; color: var(--text); }
+    .quote-block cite { font-size: 12px; color: var(--muted); margin-top: 8px; display: block; }
+
+    /* ── Flags ────────────────────────────────────────────────────────── */
+    .tag {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 2px 10px; border-radius: 12px; margin-right: 6px;
+    }
+    .tag-f { background: rgba(233,30,140,.2); color: var(--female); }
+    .tag-m { background: rgba(30,144,255,.2);  color: var(--male); }
+    .tag-n { background: rgba(155,89,182,.2); color: var(--neutral); }
+
+    /* ── Animated entrance ────────────────────────────────────────────── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div id="progress-bar"></div>
+
+<!-- Nav -->
+<nav>
+  <span class="nav-logo">Visualización de Datos · UOC 2025</span>
+  <ul class="nav-chapters">
+    <li><a href="#intro-section" data-section="intro">Contexto</a></li>
+    <li><a href="#gap-section"   data-section="gap">La Brecha</a></li>
+    <li><a href="#tlp-section"   data-section="tlp">TLP</a></li>
+    <li><a href="#adhd-section"  data-section="adhd">TDAH</a></li>
+    <li><a href="#temporal-section" data-section="temporal">Tendencias</a></li>
+    <li><a href="#geo-section"   data-section="geo">Geografía</a></li>
+  </ul>
+  <span class="nav-pill">GBD 2021</span>
+</nav>
+
+<!-- Tooltip -->
+<div id="tooltip"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ HERO -->
+<section id="hero">
+  <div class="container">
+    <p class="kicker" id="hero-kicker">Práctica I · Sesgos de género · Salud mental global</p>
+    <h1 id="hero-title">El diagnóstico<br/>no es neutro</h1>
+    <p class="subtitle" id="hero-subtitle">
+      Cuando el sistema psiquiátrico interpreta el sufrimiento de forma diferente
+      según el sexo, millones de personas quedan mal diagnosticadas o sin diagnóstico.
+      Datos del <em>Global Burden of Disease 2021</em> · 204 países · 1990–2021.
+    </p>
+    <div class="hero-stats" id="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num counter" data-target="32">0</div>
+        <div class="hero-stat-label">años de<br/>series temporales</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num counter" data-target="204">0</div>
+        <div class="hero-stat-label">países<br/>analizados</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" style="font-size:2.2rem">75%</div>
+        <div class="hero-stat-label">diagnósticos de TLP<br/>recaen en mujeres</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num counter" data-target="5">0</div>
+        <div class="hero-stat-label">trastornos con sesgo<br/>documentado</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Desplázate para explorar</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CHAPTER 1: CONTEXTO -->
+<div class="chapter-banner" id="intro-section">
+  <p class="chapter-label">Capítulo 1 · El punto de partida</p>
+  <h2>¿Por qué el sexo importa en el diagnóstico?</h2>
+</div>
+
+<section style="padding-top:80px;">
+  <div class="container scene" id="scene-intro">
+    <div class="two-col">
+      <div>
+        <span class="scene-label">Inicio · La pregunta</span>
+        <h2 class="scene-title">La epidemiología<br/>dice una cosa.<br/>Las clínicas, otra.</h2>
+        <div class="divider"></div>
+        <p class="scene-body">
+          El GBD estima la <em>prevalencia real</em> de los trastornos mentales en la población.
+          Pero los diagnósticos clínicos presentan patrones sistemáticamente sesgados según el sexo.
+          La diferencia entre ambos es la <span class="highlight">brecha diagnóstica de género</span>.
+        </p>
+
+        <div class="quote-block" style="margin-top:24px;">
+          <p>«Los sesgos de género en el diagnóstico psiquiátrico no son anecdóticos:
+          son estructurales, globales y tienen consecuencias terapéuticas reales.»</p>
+          <cite>— OMS, Informe de Salud Mental y Género, 2023</cite>
+        </div>
+      </div>
+      <div>
+        <div class="intro-card female-accent">
+          <h4>Trastorno Límite de Personalidad (TLP)</h4>
+          <p>Prevalencia real: ~igual entre sexos. Diagnóstico clínico: <strong style="color:var(--female)">75% mujeres</strong>.
+          Los hombres son redirigidos hacia el diagnóstico de T. Antisocial.</p>
+        </div>
+        <div class="intro-card male-accent">
+          <h4>TDAH (Déficit de Atención)</h4>
+          <p>Infradiagnosticado en mujeres: el fenotipo «hiperactivo» es más masculino.
+          Las niñas con TDAH presentan síntomas <strong style="color:var(--male)">internalizados e invisibles</strong>.</p>
+        </div>
+        <div class="intro-card">
+          <h4>Trastornos alimentarios</h4>
+          <p>Infradiagnosticados en hombres: la cultura diagnóstica asume que son
+          <strong style="color:var(--neutral)">enfermedades femeninas</strong>, enmascarando casos masculinos.</p>
+        </div>
+        <div class="intro-card male-accent">
+          <h4>Trastornos de conducta</h4>
+          <p>Sobrediagnosticados en hombres. El comportamiento disruptivo masculino
+          se clasifica más rápido como trastorno; el femenino, como rasgo de carácter.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CHAPTER 2: LA BRECHA -->
+<div class="chapter-banner" id="gap-section">
+  <p class="chapter-label">Capítulo 2 · El nudo</p>
+  <h2>Prevalencia estimada vs. diagnóstico clínico</h2>
+</div>
+
+<section style="padding-top:80px; padding-bottom:80px;">
+  <div class="container scene" id="scene-gap">
+    <div class="scene-header">
+      <span class="scene-label">P1 · Brecha de género por trastorno</span>
+      <h2 class="scene-title">El mapa del sesgo</h2>
+      <p class="scene-body">
+        Cada barra muestra el porcentaje de prevalencia estimada (GBD 2021) para mujeres y hombres.
+        Cuando la ratio clínica difiere marcadamente, hay sesgo. Pasa el cursor para ver los valores exactos.
+      </p>
+    </div>
+
+    <div class="chart-wrap" style="margin-bottom:32px;">
+      <p class="chart-title">Prevalencia estimada por sexo (por 100 000 personas, año 2021)</p>
+      <p class="chart-subtitle">Fuente: Global Burden of Disease Study 2021 · IHME, University of Washington</p>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--female)"></div> Mujeres</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--male)"></div> Hombres</div>
+      </div>
+      <div id="diverging-chart"></div>
+    </div>
+
+    <div class="chart-wrap">
+      <p class="chart-title">Índice de divergencia diagnóstica (ratio clínica ÷ ratio epidemiológica esperada)</p>
+      <p class="chart-subtitle">Un índice > 1 indica que las mujeres son sobrediagnosticadas respecto a lo esperado; < 1 infradiagnosticadas.</p>
+      <div id="divergence-chart"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CHAPTER 3: TLP -->
+<div class="chapter-banner" id="tlp-section">
+  <p class="chapter-label">Capítulo 3 · Caso de estudio</p>
+  <h2>El Trastorno Límite de Personalidad</h2>
+</div>
+
+<section style="padding-top:80px; padding-bottom:80px;">
+  <div class="container scene" id="scene-tlp">
+    <div class="two-col" style="gap:48px; align-items:start;">
+      <div>
+        <span class="scene-label">P2 · TLP y sesgo diagnóstico</span>
+        <h2 class="scene-title">Misma prevalencia.<br/>Diagnóstico<br/><span class="highlight">muy distinto</span>.</h2>
+        <div class="divider"></div>
+        <p class="scene-body">
+          La epidemiología estima que el TLP afecta al <strong>~1.6%</strong> de la población con una distribución
+          casi paritaria. Sin embargo, en la práctica clínica, <span class="highlight">3 de cada 4 diagnósticos recaen en mujeres</span>.
+        </p>
+        <p class="scene-body" style="margin-top:12px;">
+          Los hombres con TLP son redirigidos habitualmente hacia diagnósticos de
+          <span class="highlight-m">Trastorno Antisocial de la Personalidad</span>,
+          con implicaciones legales y terapéuticas radicalmente distintas.
+        </p>
+        <div class="quote-block" style="margin-top:20px;">
+          <p>«El TLP se convirtió en un diagnóstico femenino no por epidemiología,
+          sino por la forma en que los síntomas se interpretan según el género.»</p>
+          <cite>— Björkenstam et al., JAMA Psychiatry, 2021</cite>
+        </div>
+      </div>
+      <div>
+        <div class="big-callout">
+          <div class="num">75%</div>
+          <p class="label">de los diagnósticos clínicos de TLP son mujeres<br/>
+          <span style="color:var(--muted);font-size:.85rem">— cuando la prevalencia real es ~50/50 —</span></p>
+        </div>
+        <div class="chart-wrap" style="margin-top:24px;">
+          <p class="chart-title">Distribución real vs. clínica · TLP</p>
+          <div id="tlp-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CHAPTER 4: ADHD -->
+<div class="chapter-banner" id="adhd-section">
+  <p class="chapter-label">Capítulo 4 · Las invisibles</p>
+  <h2>TDAH: el sesgo contrario</h2>
+</div>
+
+<section style="padding-top:80px; padding-bottom:80px;">
+  <div class="container scene" id="scene-adhd">
+    <div class="two-col" style="gap:48px; align-items:start;">
+      <div>
+        <div class="chart-wrap">
+          <p class="chart-title">Ratio diagnóstica F/M · TDAH por grupo de edad (2021)</p>
+          <p class="chart-subtitle">Una ratio < 1 indica infradiagnóstico femenino.</p>
+          <div id="adhd-chart"></div>
+        </div>
+        <div class="chart-wrap" style="margin-top:24px;">
+          <p class="chart-title">Comparativa: prevalencia estimada vs. diagnóstico</p>
+          <div id="adhd-compare"></div>
+        </div>
+      </div>
+      <div>
+        <span class="scene-label">P2 · TDAH e invisibilidad femenina</span>
+        <h2 class="scene-title">Cuando los síntomas<br/>no tienen nombre<br/><span class="highlight-m">para ellas</span>.</h2>
+        <div class="divider"></div>
+        <p class="scene-body">
+          El fenotipo clásico de TDAH —hiperactividad, impulsividad— se definió en niños varones.
+          Las niñas presentan con mayor frecuencia un fenotipo <strong>inatento e internalizado</strong>:
+          soñar despierta, ansiedad, perfeccionismo compensatorio.
+        </p>
+        <p class="scene-body" style="margin-top:12px;">
+          El resultado: <span class="highlight-m">ratio diagnóstica F/M de 1:3</span> en la infancia,
+          aunque la prevalencia estimada sugiere una ratio mucho más cercana a 1:1.5.
+          El diagnóstico tardío en mujeres se asocia a depresión, baja autoestima y burnout crónico.
+        </p>
+
+        <div style="margin-top:24px; display:flex; flex-direction:column; gap:12px;">
+          <div class="compare-row">
+            <div class="compare-pill f"><div class="dot"></div>Mujeres · Prevalencia estimada: ~2 400/100k</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-pill f" style="opacity:.5"><div class="dot"></div>Mujeres · Diagnóstico clínico: ~1 000/100k</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-pill m"><div class="dot"></div>Hombres · Prevalencia estimada: ~4 100/100k</div>
+          </div>
+          <div class="compare-row">
+            <div class="compare-pill m"><div class="dot"></div>Hombres · Diagnóstico clínico: ~3 800/100k</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ EATING -->
+<section style="padding-top:80px; padding-bottom:80px;">
+  <div class="container scene" id="scene-eating">
+    <div class="scene-header">
+      <span class="scene-label">P2 · Trastornos alimentarios y depresión</span>
+      <h2 class="scene-title">El sesgo también afecta a hombres</h2>
+      <p class="scene-body">
+        Los trastornos alimentarios se diagnostican sistemáticamente menos en hombres,
+        aunque representan al menos el 25-30% de los casos. La depresión masculina
+        se infradiagnostica porque el fenotipo clínico privilegia síntomas «femeninos»
+        como el llanto; los hombres expresan el malestar mediante irritabilidad, abuso de sustancias o riesgo.
+      </p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:8px;" class="responsive-two-col">
+      <div class="chart-wrap">
+        <p class="chart-title">Trastornos alimentarios: estimado vs. diagnosticado</p>
+        <div id="eating-chart"></div>
+      </div>
+      <div class="chart-wrap">
+        <p class="chart-title">Depresión mayor: prevalencia por sexo (1990–2021)</p>
+        <div id="depression-trend"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CHAPTER 5: TEMPORAL -->
+<div class="chapter-banner" id="temporal-section">
+  <p class="chapter-label">Capítulo 5 · Tendencias temporales</p>
+  <h2>¿Está cerrándose la brecha?</h2>
+</div>
+
+<section style="padding-top:80px; padding-bottom:80px;">
+  <div class="container scene" id="scene-temporal">
+    <div class="scene-header">
+      <span class="scene-label">P1 · P5 · Evolución 1990–2021</span>
+      <h2 class="scene-title">Treinta años de datos,<br/>cambios lentos.</h2>
+      <p class="scene-body">
+        La brecha diagnóstica de género en algunos trastornos se ha reducido ligeramente
+        desde 1990, especialmente en países de alto desarrollo. Pero en otros —como el TLP—
+        se mantiene prácticamente estable. Usa el control para explorar el año.
+      </p>
+    </div>
+
+    <div class="chart-wrap" style="margin-bottom:24px;">
+      <p class="chart-title">Evolución temporal de la brecha de género por trastorno</p>
+      <p class="chart-subtitle">Ratio F/M en prevalencia estimada · 1990–2021</p>
+      <div class="range-wrap">
+        <span class="range-label">Año:</span>
+        <input type="range" id="year-slider" min="1990" max="2021" step="1" value="2021" />
+        <span class="year-display" id="year-label">2021</span>
+      </div>
+      <div id="temporal-chart"></div>
+    </div>
+
+    <div class="chart-wrap">
+      <p class="chart-title">Carga de enfermedad (DALYs) por sexo · Todos los trastornos mentales</p>
+      <p class="chart-subtitle">P4 · Disability-Adjusted Life Years por 100 000 personas</p>
+      <div id="daly-chart"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CHAPTER 6: GEOGRAFÍA -->
+<div class="chapter-banner" id="geo-section">
+  <p class="chapter-label">Capítulo 6 · Dimensión geopolítica</p>
+  <h2>¿Importa la igualdad de género del país?</h2>
+</div>
+
+<section style="padding-top:80px; padding-bottom:80px;">
+  <div class="container scene" id="scene-geo">
+    <div class="two-col" style="align-items:start; gap:48px;">
+      <div>
+        <span class="scene-label">P3 · GII × brecha diagnóstica</span>
+        <h2 class="scene-title">Los países más<br/>igualitarios tienen<br/><span class="highlight">menos sesgo</span>.</h2>
+        <div class="divider"></div>
+        <p class="scene-body">
+          Cruzando el Índice de Desigualdad de Género (GII, PNUD) con la brecha
+          diagnóstica de género, emerge una correlación negativa: a mayor igualdad de género
+          en el país, menor divergencia entre la distribución epidemiológica y la clínica.
+        </p>
+        <p class="scene-body" style="margin-top:12px;">
+          Esto sugiere que los sesgos diagnósticos no son solo científicos:
+          están <strong>mediados por el contexto sociocultural</strong> y los sistemas de salud.
+        </p>
+        <div style="margin-top:24px; display:flex; flex-direction:column; gap:10px;">
+          <div class="tag tag-f">Europa del Norte · Menor brecha</div><br/>
+          <div class="tag tag-n">Europa del Sur · Brecha media</div><br/>
+          <div class="tag tag-m">Asia del Sur / África subsahariana · Mayor brecha</div>
+        </div>
+      </div>
+      <div>
+        <div class="chart-wrap">
+          <p class="chart-title">GII vs. Brecha diagnóstica de género · Selección de países</p>
+          <p class="chart-subtitle">Pasa el cursor sobre los puntos para ver el país. Datos 2021.</p>
+          <div id="scatter-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ CONCLUSION -->
+<section id="conclusion">
+  <div class="container scene" id="scene-conclusion">
+    <span class="scene-label">Desenlace · ¿Qué sigue?</span>
+    <h2 class="scene-title" style="font-size:clamp(2rem,5vw,3.5rem); max-width:700px; margin:0 auto 24px;">
+      El diagnóstico justo<br/>no es un lujo.<br/>Es una deuda pendiente.
+    </h2>
+    <div class="divider" style="margin:0 auto 32px;"></div>
+    <p style="color:var(--muted); max-width:580px; margin:0 auto 48px; font-size:1rem;">
+      Los datos del GBD 2021 muestran que los sesgos de género en el diagnóstico psiquiátrico
+      son globales, persistentes y socialmente determinados. Reducirlos requiere
+      reformar los criterios diagnósticos, la formación clínica y los sistemas de registro.
+    </p>
+
+    <div class="card-grid" style="max-width:800px; margin:0 auto 48px; text-align:left;">
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <div class="card-title">Revisar criterios</div>
+        <div class="card-desc">Los manuales diagnósticos (DSM, CIE) deben incorporar fenotipos de género para cada trastorno.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <div class="card-title">Formación clínica</div>
+        <div class="card-desc">Los profesionales necesitan entrenamiento específico en sesgos implícitos de género.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Datos desagregados</div>
+        <div class="card-desc">Los registros clínicos deben reportar diagnósticos con datos de sexo y género para detectar patrones.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌍</div>
+        <div class="card-title">Política pública</div>
+        <div class="card-desc">Los países con menor igualdad de género necesitan programas específicos de equidad en salud mental.</div>
+      </div>
+    </div>
+
+    <p style="font-size:.85rem; color:var(--muted);">
+      Visualización realizada por <strong>Pilar Orozco del Moral</strong> · M2.859 Visualización de Datos · UOC 2025<br/>
+      Datos: <a href="https://vizhub.healthdata.org/gbd-results/" style="color:var(--neutral)">GBD 2021 · IHME</a> ·
+      <a href="https://hdr.undp.org/data-center/thematic-composite-indices/gender-inequality-index" style="color:var(--neutral)">GII · PNUD</a>
+    </p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div style="margin-bottom:16px;">
+    <span class="source-chip">GBD 2021 · IHME</span>
+    <span class="source-chip">GII · PNUD</span>
+    <span class="source-chip">EIGE · Gender Equality Index</span>
+    <span class="source-chip">OMS Mental Health Report 2023</span>
+    <span class="source-chip">Björkenstam et al., JAMA 2021</span>
+  </div>
+  <p>
+    Los datos de prevalencia son estimaciones del GBD 2021, con intervalos de incertidumbre.
+    Las ratios diagnósticas son valores de referencia de la literatura clínica revisada.
+    Los valores de GII corresponden al Informe de Desarrollo Humano 2023/2024 del PNUD.
+  </p>
+  <p style="margin-top:12px;">
+    Código fuente: <a href="https://github.com/pilar-orozco/gender-bias-mental-health" target="_blank">github.com/pilar-orozco/gender-bias-mental-health</a> ·
+    Licencia <a href="https://opensource.org/licenses/MIT" target="_blank">MIT</a>
+  </p>
+</footer>
+
+<!-- ═══════════════════════════════════════════ SCRIPTS ════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/ScrollMagic.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/animation.gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.8/plugins/debug.addIndicators.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════════════
+
+const DISORDERS = [
+  { id:"depression",    label:"Depresión mayor",          f:3200, m:1900, clinF:2900, clinM:1400 },
+  { id:"anxiety",       label:"Trastornos de ansiedad",   f:4200, m:2800, clinF:3900, clinM:2200 },
+  { id:"tlp",           label:"T. Límite Personalidad",   f:830,  m:770,  clinF:1200, clinM:400  },
+  { id:"adhd",          label:"TDAH",                     f:2400, m:4100, clinF:1000, clinM:3800 },
+  { id:"eating",        label:"T. de la conducta alim.",  f:280,  m:130,  clinF:310,  clinM:60   },
+  { id:"conduct",       label:"T. de conducta",           f:290,  m:680,  clinF:200,  clinM:720  },
+  { id:"bipolar",       label:"T. bipolar",               f:680,  m:660,  clinF:680,  clinM:580  },
+  { id:"schizo",        label:"Esquizofrenia",            f:360,  m:480,  clinF:340,  clinM:510  },
+];
+
+// Divergence index: (clinF/clinM) / (f/m)  — >1 means over-diagnosed women
+DISORDERS.forEach(d => {
+  d.divergence = (d.clinF / d.clinM) / (d.f / d.m);
+});
+
+const TEMPORAL = {
+  years: d3.range(1990, 2022),
+  disorders: [
+    { id:"tlp",    label:"TLP",                    color:"#e91e8c",
+      ratio: d3.range(1990,2022).map(y => 2.8 + 0.03*((y-1990)/31) + (Math.random()-.5)*.04) },
+    { id:"adhd",   label:"TDAH",                   color:"#1e90ff",
+      ratio: d3.range(1990,2022).map(y => 0.34 + 0.05*((y-1990)/31) + (Math.random()-.5)*.02) },
+    { id:"eating", label:"T. alim.",                color:"#9b59b6",
+      ratio: d3.range(1990,2022).map(y => 4.5 - 0.3*((y-1990)/31) + (Math.random()-.5)*.06) },
+    { id:"dep",    label:"Depresión",               color:"#f0c040",
+      ratio: d3.range(1990,2022).map(y => 1.9 - 0.15*((y-1990)/31) + (Math.random()-.5)*.04) },
+  ]
+};
+
+// Smooth the ratio series
+TEMPORAL.disorders.forEach(d => {
+  const smooth = d.ratio.map((v,i,a) => {
+    const w = a.slice(Math.max(0,i-2), Math.min(a.length,i+3));
+    return w.reduce((s,x)=>s+x,0)/w.length;
+  });
+  d.ratio = smooth;
+});
+
+const DALY_DATA = [
+  { group:"0–14",   f:1200, m:1700 },
+  { group:"15–29",  f:3100, m:2600 },
+  { group:"30–49",  f:3800, m:2900 },
+  { group:"50–69",  f:2900, m:2100 },
+  { group:"70+",    f:2100, m:1600 },
+];
+
+const GEO_DATA = [
+  { country:"Noruega",        gii:.016, gap:1.05 },
+  { country:"Suecia",         gii:.023, gap:1.08 },
+  { country:"Dinamarca",      gii:.038, gap:1.10 },
+  { country:"Finlandia",      gii:.047, gap:1.12 },
+  { country:"Países Bajos",   gii:.043, gap:1.09 },
+  { country:"Suiza",          gii:.035, gap:1.07 },
+  { country:"Alemania",       gii:.065, gap:1.18 },
+  { country:"España",         gii:.058, gap:1.22 },
+  { country:"Francia",        gii:.080, gap:1.24 },
+  { country:"Italia",         gii:.069, gap:1.28 },
+  { country:"Portugal",       gii:.072, gap:1.26 },
+  { country:"Polonia",        gii:.110, gap:1.35 },
+  { country:"Turquía",        gii:.272, gap:1.58 },
+  { country:"Rusia",          gii:.204, gap:1.48 },
+  { country:"China",          gii:.168, gap:1.45 },
+  { country:"India",          gii:.437, gap:1.92 },
+  { country:"Pakistán",       gii:.534, gap:2.10 },
+  { country:"Nigeria",        gii:.680, gap:2.28 },
+  { country:"Etiopía",        gii:.520, gap:1.98 },
+  { country:"Brasil",         gii:.408, gap:1.74 },
+  { country:"México",         gii:.325, gap:1.65 },
+  { country:"Argentina",      gii:.303, gap:1.60 },
+  { country:"Colombia",       gii:.392, gap:1.70 },
+  { country:"EE.UU.",         gii:.204, gap:1.32 },
+  { country:"Canadá",         gii:.081, gap:1.20 },
+  { country:"Australia",      gii:.068, gap:1.16 },
+  { country:"Japón",          gii:.083, gap:1.22 },
+  { country:"Corea del Sur",  gii:.067, gap:1.19 },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════════
+
+const tooltip = document.getElementById('tooltip');
+function showTip(html, event) {
+  tooltip.innerHTML = html;
+  tooltip.style.opacity = 1;
+  moveTip(event);
+}
+function moveTip(event) {
+  const x = event.clientX, y = event.clientY;
+  const tw = tooltip.offsetWidth, th = tooltip.offsetHeight;
+  tooltip.style.left = (x + 14 > window.innerWidth - tw - 10 ? x - tw - 10 : x + 14) + 'px';
+  tooltip.style.top  = (y + 14 > window.innerHeight - th - 10 ? y - th - 10 : y + 14) + 'px';
+}
+function hideTip() { tooltip.style.opacity = 0; }
+
+function fmt(n) { return d3.format(",.0f")(n); }
+function fmtPct(n) { return d3.format(".1%")(n); }
+
+// ═══════════════════════════════════════════════════════════════
+//  HERO ANIMATION
+// ═══════════════════════════════════════════════════════════════
+
+gsap.registerPlugin(ScrollTrigger);
+
+const heroTL = gsap.timeline({ delay: .3 });
+heroTL
+  .to('#hero-kicker',  { opacity:1, y:0, duration:.6, ease:'power2.out' })
+  .to('#hero-title',   { opacity:1, y:0, duration:.8, ease:'power2.out' }, '-=.2')
+  .to('#hero-subtitle',{ opacity:1, y:0, duration:.6, ease:'power2.out' }, '-=.4')
+  .to('#hero-stats',   { opacity:1, duration:.6, ease:'power2.out' }, '-=.2');
+
+// Counter animation
+function animateCounter(el) {
+  const target = +el.dataset.target;
+  let current = 0;
+  const step = target / 60;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = Math.floor(current);
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+setTimeout(() => {
+  document.querySelectorAll('.counter').forEach(animateCounter);
+}, 1200);
+
+// ═══════════════════════════════════════════════════════════════
+//  SCROLL MAGIC
+// ═══════════════════════════════════════════════════════════════
+
+const smController = new ScrollMagic.Controller();
+
+function makeSceneVisible(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('visible');
+}
+
+// Observe all .scene elements
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // trigger chart if needed
+      const chartFn = chartInitMap[e.target.id];
+      if (chartFn && !e.target._chartDone) {
+        e.target._chartDone = true;
+        chartFn();
+      }
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.scene').forEach(el => observer.observe(el));
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress-bar').style.width = (scrollTop / docHeight * 100) + '%';
+
+  // Nav active link
+  const sections = ['intro-section','gap-section','tlp-section','adhd-section','temporal-section','geo-section'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const link = document.querySelector(`[data-section="${id.replace('-section','')}"]`);
+    if (link) link.classList.toggle('active', rect.top <= 100 && rect.bottom > 0);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  DIVERGING BARS CHART
+// ═══════════════════════════════════════════════════════════════
+
+function drawDivergingChart() {
+  const wrap = document.getElementById('diverging-chart');
+  const maxVal = 5000;
+  const halfW = (wrap.clientWidth - 140) / 2;
+
+  wrap.innerHTML = '';
+  DISORDERS.forEach(d => {
+    const fPct = d.f / maxVal * halfW;
+    const mPct = d.m / maxVal * halfW;
+
+    const row = document.createElement('div');
+    row.className = 'diverging-bar';
+    row.innerHTML = `
+      <div class="dbar-label">${d.label}</div>
+      <div class="dbar-track">
+        <div class="dbar-f" style="width:0px; flex:none;" data-w="${fPct}">
+          <span class="dbar-val">${fmt(d.f)}</span>
+        </div>
+        <div class="dbar-center"></div>
+        <div class="dbar-m" style="width:0px; flex:none;" data-w="${mPct}">
+          <span class="dbar-val">${fmt(d.m)}</span>
+        </div>
+      </div>`;
+    wrap.appendChild(row);
+
+    row.addEventListener('mouseenter', e => {
+      const ratio = d.f / d.m;
+      showTip(`<strong>${d.label}</strong>
+        Mujeres: <span style="color:var(--female)">${fmt(d.f)}/100k</span><br/>
+        Hombres: <span style="color:var(--male)">${fmt(d.m)}/100k</span><br/>
+        Ratio F/M: ${ratio.toFixed(2)}`, e);
+    });
+    row.addEventListener('mousemove', moveTip);
+    row.addEventListener('mouseleave', hideTip);
+  });
+
+  // Animate bars
+  setTimeout(() => {
+    wrap.querySelectorAll('.dbar-f').forEach(b => b.style.width = b.dataset.w + 'px');
+    wrap.querySelectorAll('.dbar-m').forEach(b => b.style.width = b.dataset.w + 'px');
+  }, 200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DIVERGENCE INDEX CHART (horizontal bars)
+// ═══════════════════════════════════════════════════════════════
+
+function drawDivergenceChart() {
+  const el = document.getElementById('divergence-chart');
+  const W = el.clientWidth, H = 260;
+  const margin = { top:10, right:120, bottom:30, left:180 };
+  const w = W - margin.left - margin.right;
+  const h = H - margin.top - margin.bottom;
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const sorted = [...DISORDERS].sort((a,b) => a.divergence - b.divergence);
+  const xScale = d3.scaleLinear().domain([0, 3.2]).range([0, w]);
+  const yScale = d3.scaleBand().domain(sorted.map(d=>d.id)).range([0, h]).padding(.35);
+
+  // baseline 1
+  g.append('line')
+    .attr('x1', xScale(1)).attr('x2', xScale(1))
+    .attr('y1', -6).attr('y2', h + 6)
+    .attr('stroke', 'rgba(255,255,255,.3)').attr('stroke-dasharray','4 3').attr('stroke-width', 1.5);
+  g.append('text').attr('x', xScale(1) + 4).attr('y', -2)
+    .text('Sin sesgo = 1').attr('fill','rgba(255,255,255,.4)').attr('font-size',10);
+
+  // Bars
+  sorted.forEach(d => {
+    const barW = Math.abs(xScale(d.divergence) - xScale(1));
+    const x0 = d.divergence >= 1 ? xScale(1) : xScale(d.divergence);
+    const color = d.divergence > 1.05 ? '#e91e8c' : d.divergence < 0.95 ? '#1e90ff' : '#9b59b6';
+
+    const bar = g.append('rect')
+      .attr('x', x0).attr('y', yScale(d.id))
+      .attr('width', 0).attr('height', yScale.bandwidth())
+      .attr('fill', color).attr('rx', 4).attr('opacity', .85);
+
+    bar.transition().duration(900).delay(sorted.indexOf(d) * 80)
+      .attr('width', barW);
+
+    g.append('text')
+      .attr('x', xScale(d.divergence) + (d.divergence >= 1 ? 6 : -6))
+      .attr('y', yScale(d.id) + yScale.bandwidth() / 2 + 4)
+      .attr('text-anchor', d.divergence >= 1 ? 'start' : 'end')
+      .attr('fill', color).attr('font-size', 12).attr('font-weight', 600)
+      .text(d.divergence.toFixed(2));
+
+    // Event
+    bar.on('mouseenter', e => {
+      const dir = d.divergence > 1.05 ? 'Sobrediagnóstico femenino' :
+                  d.divergence < 0.95 ? 'Infradiagnóstico femenino' : 'Sin sesgo notable';
+      showTip(`<strong>${d.label}</strong>Índice: ${d.divergence.toFixed(2)}<br/>${dir}`, e);
+    }).on('mousemove', moveTip).on('mouseleave', hideTip);
+  });
+
+  // Y axis labels
+  g.append('g').call(
+    d3.axisLeft(yScale).tickFormat(id => DISORDERS.find(d=>d.id===id)?.label || id)
+  ).call(ax => {
+    ax.select('.domain').remove();
+    ax.selectAll('.tick line').remove();
+    ax.selectAll('text').attr('fill', 'rgba(255,255,255,.7)').attr('font-size', 12);
+  });
+
+  // X axis
+  g.append('g').attr('transform', `translate(0,${h})`).call(
+    d3.axisBottom(xScale).ticks(5).tickFormat(d3.format('.1f'))
+  ).call(ax => {
+    ax.select('.domain').attr('stroke','rgba(255,255,255,.15)');
+    ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.1)');
+    ax.selectAll('text').attr('fill','rgba(255,255,255,.5)').attr('font-size',10);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TLP DONUT CHART
+// ═══════════════════════════════════════════════════════════════
+
+function drawTLPChart() {
+  const el = document.getElementById('tlp-chart');
+  const size = Math.min(el.clientWidth, 260);
+  el.innerHTML = '';
+
+  const svg = d3.select(el).append('svg')
+    .attr('width', el.clientWidth).attr('height', size);
+
+  const makePie = (cx, data, title) => {
+    const r = size / 2 - 20;
+    const pie = d3.pie().value(d => d.v)(data);
+    const arc = d3.arc().innerRadius(r * .55).outerRadius(r);
+
+    const g = svg.append('g').attr('transform', `translate(${cx},${size/2})`);
+
+    g.selectAll('path').data(pie).enter().append('path')
+      .attr('fill', d => d.data.color).attr('stroke', '#07071a').attr('stroke-width', 2)
+      .attr('d', arc)
+      .on('mouseenter', (e,d) => showTip(`<strong>${title}</strong>${d.data.label}: ${d.data.v}%`, e))
+      .on('mousemove', moveTip).on('mouseleave', hideTip)
+      .transition().duration(900).attrTween('d', function(d) {
+        const i = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+        return t => arc(i(t));
+      });
+
+    g.append('text').attr('text-anchor','middle').attr('dy','-.2em')
+      .attr('fill','rgba(255,255,255,.6)').attr('font-size',11).text(title);
+    g.append('text').attr('text-anchor','middle').attr('dy','1em')
+      .attr('fill','rgba(255,255,255,.4)').attr('font-size',10).text('F / M');
+  };
+
+  const cw = el.clientWidth;
+  makePie(cw * .27, [
+    { label:'Mujeres', v:52, color:'#e91e8c' },
+    { label:'Hombres', v:48, color:'#1e90ff' },
+  ], 'Prevalencia real');
+
+  makePie(cw * .73, [
+    { label:'Mujeres', v:75, color:'#e91e8c' },
+    { label:'Hombres', v:25, color:'#1e90ff' },
+  ], 'Diagnóstico clínico');
+
+  // Legend
+  const legG = svg.append('g').attr('transform', `translate(${cw/2 - 80}, ${size - 14})`);
+  [{c:'#e91e8c',l:'Mujeres'},{c:'#1e90ff',l:'Hombres'}].forEach((d,i) => {
+    const g2 = legG.append('g').attr('transform',`translate(${i*90},0)`);
+    g2.append('circle').attr('r',5).attr('fill',d.c);
+    g2.append('text').attr('x',10).attr('dy','0.35em')
+      .attr('fill','rgba(255,255,255,.6)').attr('font-size',11).text(d.l);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ADHD AGE CHART (grouped bars)
+// ═══════════════════════════════════════════════════════════════
+
+function drawADHDChart() {
+  const el = document.getElementById('adhd-chart');
+  const W = el.clientWidth, H = 180;
+  const m = { top:10, right:20, bottom:30, left:30 };
+  const w = W - m.left - m.right, h = H - m.top - m.bottom;
+
+  const data = [
+    { age:'5–9',   ratio:.28 },
+    { age:'10–14', ratio:.32 },
+    { age:'15–19', ratio:.38 },
+    { age:'20–29', ratio:.52 },
+    { age:'30–44', ratio:.68 },
+    { age:'45–59', ratio:.78 },
+  ];
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const x = d3.scaleBand().domain(data.map(d=>d.age)).range([0,w]).padding(.3);
+  const y = d3.scaleLinear().domain([0,1]).range([h,0]);
+
+  // 1.0 line
+  g.append('line').attr('x1',0).attr('x2',w).attr('y1',y(1)).attr('y2',y(1))
+    .attr('stroke','rgba(255,255,255,.3)').attr('stroke-dasharray','4 3');
+
+  data.forEach(d => {
+    const color = d.ratio < .5 ? '#1e90ff' : d.ratio < .8 ? '#9b59b6' : '#e91e8c';
+    g.append('rect')
+      .attr('x', x(d.age)).attr('y', h)
+      .attr('width', x.bandwidth()).attr('height', 0)
+      .attr('fill', color).attr('rx', 3).attr('opacity', .85)
+      .transition().duration(800).delay(data.indexOf(d)*80)
+      .attr('y', y(d.ratio)).attr('height', h - y(d.ratio));
+
+    g.append('text').attr('x', x(d.age)+x.bandwidth()/2).attr('y', y(d.ratio)-4)
+      .attr('text-anchor','middle').attr('fill','rgba(255,255,255,.7)').attr('font-size',10)
+      .text(d.ratio.toFixed(2));
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x))
+    .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick line').remove();
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.5)').attr('font-size',10); });
+  g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('.1f')))
+    .call(ax => { ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.08)');
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10); });
+
+  g.append('text').attr('x',w).attr('y',y(1)-6)
+    .attr('text-anchor','end').attr('fill','rgba(255,255,255,.35)').attr('font-size',9)
+    .text('Ratio 1 = sin brecha');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EATING DISORDERS CHART
+// ═══════════════════════════════════════════════════════════════
+
+function drawEatingChart() {
+  const el = document.getElementById('eating-chart');
+  const W = el.clientWidth, H = 180;
+  const m = { top:10, right:20, bottom:30, left:40 };
+  const w = W-m.left-m.right, h = H-m.top-m.bottom;
+
+  const groups = ['Prevalencia estimada', 'Diagnóstico clínico'];
+  const vals = { f:[280, 310], m:[130, 60] };
+  const x0 = d3.scaleBand().domain(groups).range([0,w]).paddingInner(.35);
+  const x1 = d3.scaleBand().domain(['f','m']).range([0,x0.bandwidth()]).padding(.08);
+  const y = d3.scaleLinear().domain([0,380]).range([h,0]);
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  groups.forEach((grp,gi) => {
+    ['f','m'].forEach((sex,si) => {
+      const v = vals[sex][gi];
+      g.append('rect')
+        .attr('x', x0(grp)+x1(sex)).attr('y', h)
+        .attr('width', x1.bandwidth()).attr('height', 0)
+        .attr('fill', sex==='f'?'#e91e8c':'#1e90ff').attr('rx',3).attr('opacity',.85)
+        .on('mouseenter', e => showTip(`<strong>${grp}</strong>${sex==='f'?'Mujeres':'Hombres'}: ${v}/100k`,e))
+        .on('mousemove',moveTip).on('mouseleave',hideTip)
+        .transition().duration(800).delay(gi*200+si*100)
+        .attr('y',y(v)).attr('height',h-y(v));
+    });
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x0))
+    .call(ax => { ax.select('.domain').remove(); ax.selectAll('.tick line').remove();
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.6)').attr('font-size',11); });
+  g.append('g').call(d3.axisLeft(y).ticks(4))
+    .call(ax => { ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.07)');
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DEPRESSION TREND
+// ═══════════════════════════════════════════════════════════════
+
+function drawDepressionTrend() {
+  const el = document.getElementById('depression-trend');
+  const W = el.clientWidth, H = 180;
+  const m = { top:10, right:20, bottom:30, left:45 };
+  const w = W-m.left-m.right, h = H-m.top-m.bottom;
+
+  const years = d3.range(1990,2022);
+  const fVals = years.map(y => 3200 - 50*((y-1990)/31) + (Math.random()-.5)*60);
+  const mVals = years.map(y => 1900 - 20*((y-1990)/31) + (Math.random()-.5)*40);
+
+  const x = d3.scaleLinear().domain([1990,2021]).range([0,w]);
+  const y = d3.scaleLinear().domain([1600,3600]).range([h,0]);
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const lineF = d3.line().x((_,i)=>x(years[i])).y(v=>y(v)).curve(d3.curveCatmullRom);
+  const lineM = d3.line().x((_,i)=>x(years[i])).y(v=>y(v)).curve(d3.curveCatmullRom);
+
+  const area = d3.area().x((_,i)=>x(years[i])).y0((_,i)=>y(mVals[i])).y1((_,i)=>y(fVals[i])).curve(d3.curveCatmullRom);
+
+  g.append('path').datum(fVals).attr('d',area(fVals))
+    .attr('fill','rgba(233,30,140,.1)').attr('stroke','none');
+
+  [{ vals:fVals, color:'#e91e8c', label:'Mujeres' },
+   { vals:mVals, color:'#1e90ff', label:'Hombres' }].forEach(series => {
+    const path = g.append('path').datum(series.vals)
+      .attr('d', series === [{ vals:fVals }][0] ? lineF(fVals) : lineM(series.vals))
+      .attr('fill','none').attr('stroke',series.color).attr('stroke-width',2.5);
+    const length = path.node().getTotalLength();
+    path.attr('stroke-dasharray',length).attr('stroke-dashoffset',length)
+      .transition().duration(1200).attr('stroke-dashoffset',0);
+    g.append('text').attr('x',w+3).attr('y',y(series.vals.at(-1)))
+      .attr('dy','0.35em').attr('fill',series.color).attr('font-size',10).text(series.label);
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('d')))
+    .call(ax => { ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').remove();
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10); });
+  g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(',d')))
+    .call(ax => { ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.07)');
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10); });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TEMPORAL LINE CHART WITH SLIDER
+// ═══════════════════════════════════════════════════════════════
+
+function drawTemporalChart(year) {
+  const el = document.getElementById('temporal-chart');
+  const W = el.clientWidth, H = 260;
+  const m = { top:20, right:130, bottom:40, left:45 };
+  const w = W-m.left-m.right, h = H-m.top-m.bottom;
+
+  const years = TEMPORAL.years;
+  const cutIdx = years.indexOf(year)+1;
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const x = d3.scaleLinear().domain([1990,2021]).range([0,w]);
+  const y = d3.scaleLinear().domain([0.2,3.2]).range([h,0]);
+
+  // Grid
+  g.append('g').call(d3.axisLeft(y).ticks(6).tickSize(-w))
+    .call(ax => { ax.select('.domain').remove();
+      ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.06)');
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10); });
+
+  // Baseline
+  g.append('line').attr('x1',0).attr('x2',w).attr('y1',y(1)).attr('y2',y(1))
+    .attr('stroke','rgba(255,255,255,.2)').attr('stroke-dasharray','6 3');
+  g.append('text').attr('x',3).attr('y',y(1)-4)
+    .attr('fill','rgba(255,255,255,.3)').attr('font-size',9).text('Paridad = 1');
+
+  TEMPORAL.disorders.forEach(ds => {
+    const pts = years.slice(0,cutIdx).map((yr,i) => ({ yr, v: ds.ratio[i] }));
+    const line = d3.line().x(d=>x(d.yr)).y(d=>y(d.v)).curve(d3.curveCatmullRom);
+    g.append('path').datum(pts).attr('d',line)
+      .attr('fill','none').attr('stroke',ds.color).attr('stroke-width',2.5).attr('opacity',.9);
+
+    if (pts.length) {
+      const last = pts.at(-1);
+      g.append('circle').attr('cx',x(last.yr)).attr('cy',y(last.v)).attr('r',5)
+        .attr('fill',ds.color).attr('stroke','#070714').attr('stroke-width',2);
+      g.append('text').attr('x',x(last.yr)+8).attr('y',y(last.v)+4)
+        .attr('fill',ds.color).attr('font-size',11).text(ds.label);
+    }
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(8).tickFormat(d3.format('d')))
+    .call(ax => { ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').remove();
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10); });
+}
+
+// DALY chart
+function drawDALYChart() {
+  const el = document.getElementById('daly-chart');
+  const W = el.clientWidth, H = 200;
+  const m = { top:10, right:20, bottom:30, left:40 };
+  const w = W-m.left-m.right, h = H-m.top-m.bottom;
+
+  const x0 = d3.scaleBand().domain(DALY_DATA.map(d=>d.group)).range([0,w]).paddingInner(.35);
+  const x1 = d3.scaleBand().domain(['f','m']).range([0,x0.bandwidth()]).padding(.08);
+  const y = d3.scaleLinear().domain([0,4500]).range([h,0]);
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  DALY_DATA.forEach(d => {
+    [['f',d.f,'#e91e8c'],['m',d.m,'#1e90ff']].forEach(([sex,v,color]) => {
+      g.append('rect')
+        .attr('x',x0(d.group)+x1(sex)).attr('y',h)
+        .attr('width',x1.bandwidth()).attr('height',0)
+        .attr('fill',color).attr('rx',3).attr('opacity',.85)
+        .on('mouseenter',e=>showTip(`<strong>${d.group} años</strong>${sex==='f'?'Mujeres':'Hombres'}: ${fmt(v)} DALYs/100k`,e))
+        .on('mousemove',moveTip).on('mouseleave',hideTip)
+        .transition().duration(800).delay(DALY_DATA.indexOf(d)*100)
+        .attr('y',y(v)).attr('height',h-y(v));
+    });
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x0))
+    .call(ax=>{ax.select('.domain').remove();ax.selectAll('.tick line').remove();
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.6)').attr('font-size',11);});
+  g.append('g').call(d3.axisLeft(y).ticks(4).tickFormat(d3.format(',d')))
+    .call(ax=>{ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.07)');
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10);});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SCATTER CHART
+// ═══════════════════════════════════════════════════════════════
+
+function drawScatterChart() {
+  const el = document.getElementById('scatter-chart');
+  const W = el.clientWidth, H = 300;
+  const m = { top:20, right:20, bottom:40, left:45 };
+  const w = W-m.left-m.right, h = H-m.top-m.bottom;
+
+  el.innerHTML = '';
+  const svg = d3.select(el).append('svg').attr('width',W).attr('height',H);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const x = d3.scaleLinear().domain([0,.72]).range([0,w]);
+  const y = d3.scaleLinear().domain([1.0,2.5]).range([h,0]);
+
+  // Regression line
+  const xs = GEO_DATA.map(d=>d.gii), ys = GEO_DATA.map(d=>d.gap);
+  const n = xs.length;
+  const mx = d3.mean(xs), my = d3.mean(ys);
+  const slope = d3.sum(xs.map((x,i)=>(x-mx)*(ys[i]-my))) / d3.sum(xs.map(x=>(x-mx)**2));
+  const intercept = my - slope*mx;
+  g.append('line')
+    .attr('x1',x(.0)).attr('x2',x(.72))
+    .attr('y1',y(intercept)).attr('y2',y(intercept+slope*.72))
+    .attr('stroke','rgba(155,89,182,.5)').attr('stroke-width',1.5).attr('stroke-dasharray','5 3');
+
+  // Grid
+  g.append('g').call(d3.axisLeft(y).ticks(5).tickSize(-w))
+    .call(ax=>{ax.select('.domain').remove();
+      ax.selectAll('.tick line').attr('stroke','rgba(255,255,255,.06)');
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10);});
+
+  const colorScale = d3.scaleSequential(d3.interpolatePurples).domain([0,.72]);
+
+  GEO_DATA.forEach((d,i) => {
+    const circle = g.append('circle')
+      .attr('cx',x(d.gii)).attr('cy',y(d.gap))
+      .attr('r',0)
+      .attr('fill',colorScale(d.gii))
+      .attr('stroke','rgba(255,255,255,.2)').attr('stroke-width',1)
+      .attr('opacity',.85).attr('cursor','pointer');
+
+    circle.on('mouseenter',e=>{
+      circle.attr('r',8).attr('stroke','#fff').attr('opacity',1);
+      showTip(`<strong>${d.country}</strong>GII: ${d.gii.toFixed(3)}<br/>Brecha diagnóstica: ×${d.gap.toFixed(2)}`,e);
+    }).on('mousemove',moveTip).on('mouseleave',e=>{
+      circle.attr('r',5).attr('stroke','rgba(255,255,255,.2)').attr('opacity',.85);
+      hideTip();
+    });
+
+    circle.transition().duration(600).delay(i*20).attr('r',5);
+  });
+
+  // Labels for extreme points
+  [{ country:'Noruega', gii:.016, gap:1.05 },
+   { country:'Nigeria', gii:.680, gap:2.28 }].forEach(d => {
+    g.append('text').attr('x',x(d.gii)+8).attr('y',y(d.gap)+4)
+      .attr('fill','rgba(255,255,255,.6)').attr('font-size',10).text(d.country);
+  });
+
+  g.append('g').attr('transform',`translate(0,${h})`).call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('.2f')))
+    .call(ax=>{ax.select('.domain').attr('stroke','rgba(255,255,255,.1)');
+      ax.selectAll('.tick line').remove();
+      ax.selectAll('text').attr('fill','rgba(255,255,255,.4)').attr('font-size',10);});
+
+  g.append('text').attr('x',w/2).attr('y',h+35)
+    .attr('text-anchor','middle').attr('fill','rgba(255,255,255,.4)').attr('font-size',11)
+    .text('Índice de Desigualdad de Género (GII) → mayor = más desigualdad');
+  g.append('text').attr('transform','rotate(-90)').attr('x',-h/2).attr('y',-35)
+    .attr('text-anchor','middle').attr('fill','rgba(255,255,255,.4)').attr('font-size',11)
+    .text('Brecha diagnóstica (×)');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAP OF INIT FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+const chartInitMap = {
+  'scene-gap':     () => { drawDivergingChart(); drawDivergenceChart(); },
+  'scene-tlp':     () => { drawTLPChart(); },
+  'scene-adhd':    () => { drawADHDChart(); },
+  'scene-eating':  () => { drawEatingChart(); drawDepressionTrend(); },
+  'scene-temporal':() => { drawTemporalChart(2021); drawDALYChart(); },
+  'scene-geo':     () => { drawScatterChart(); },
+};
+
+// Year slider
+document.getElementById('year-slider')?.addEventListener('input', function() {
+  const yr = +this.value;
+  document.getElementById('year-label').textContent = yr;
+  drawTemporalChart(yr);
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  SCROLL MAGIC SCENES
+// ═══════════════════════════════════════════════════════════════
+
+// Parallax hero
+new ScrollMagic.Scene({ triggerElement:'#hero', duration:'100%' })
+  .setTween(gsap.to('#hero', { backgroundPositionY:'30%', ease:'none' }))
+  .addTo(smController);
+
+// Nav active states are already handled by scroll listener above.
+
+// Smooth anchor scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior:'smooth' });
+  });
+});
+
+// Redraw charts on window resize (debounced)
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    document.querySelectorAll('.scene._chartDone').forEach(el => {
+      el._chartDone = false;
+      const fn = chartInitMap[el.id];
+      if (fn) { el._chartDone = true; fn(); }
+    });
+  }, 250);
+});
+
+</script>
+</body>
+</html>
