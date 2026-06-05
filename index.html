@@ -223,9 +223,7 @@
 
     /* ── Big stat ────────────────────── */
     .stat-isolated {
-      padding: 48px 0; text-align: center;
-      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-      margin: 40px 0;
+      padding: 24px 0 20px; text-align: center;
     }
     .stat-isolated .num {
       font-family: 'DM Serif Display', serif;
@@ -1026,21 +1024,15 @@ function drawDivergingChart() {
   const maxV = 5000;
   wrap.innerHTML = '';
 
-  // Minimum bar width to fit the label inside (px)
-  const MIN_INSIDE = 42;
-
   DISORDERS.forEach(d => {
     const fw = d.f / maxV * half, mw = d.m / maxV * half;
-    const fInside = fw >= MIN_INSIDE, mInside = mw >= MIN_INSIDE;
     const row = document.createElement('div');
     row.className = 'dbar-row';
     row.innerHTML = `<div class="dbar-name">${d.label}</div>
-      <div class="dbar-track" style="position:relative;">
-        ${!fInside ? `<span style="position:absolute;right:calc(50% + ${fw+5}px);font-size:10px;font-weight:500;color:var(--crimson);white-space:nowrap;">${fmt(d.f)}</span>` : ''}
-        <div class="dbar-f" style="width:0" data-w="${fw}">${fInside ? `<span class="dbar-val">${fmt(d.f)}</span>` : ''}</div>
+      <div class="dbar-track">
+        <div class="dbar-f" style="width:0" data-w="${fw}"><span class="dbar-val">${fmt(d.f)}</span></div>
         <div class="dbar-mid"></div>
-        <div class="dbar-m" style="width:0" data-w="${mw}">${mInside ? `<span class="dbar-val">${fmt(d.m)}</span>` : ''}</div>
-        ${!mInside ? `<span style="position:absolute;left:calc(50% + ${mw+5}px);font-size:10px;font-weight:500;color:var(--steel);white-space:nowrap;">${fmt(d.m)}</span>` : ''}
+        <div class="dbar-m" style="width:0" data-w="${mw}"><span class="dbar-val">${fmt(d.m)}</span></div>
       </div>`;
     wrap.appendChild(row);
     row.addEventListener('mouseenter', e => showTip(
